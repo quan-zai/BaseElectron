@@ -1,0 +1,21 @@
+{
+  "author" : "xuzhengquan",
+  "description" : "A minimal Electron application",
+  "devDependencies" : {
+    "electron" : "~1.7.8"
+  },
+  "keywords" : [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "license" : "CC0-1.0",
+  "main" : "main.js",
+  "name" : "electron-quick-start",
+  "scripts" : {
+    "start" : "electron ."
+  },
+  "version" : "1.0.0"
+}
