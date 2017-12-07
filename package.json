@@ -13,12 +13,15 @@
     "tutorial",
     "demo"
   ],
-  "license": "CC0-1.0",
+  "license": "",
   "main": "main.js",
   "name": "BaseElectron",
   "scripts": {
     "start": "electron .",
     "build": "electron-packager ./ BaseElectron --platform=darwin --arch=x64 --overwrite --out ./dist --production && say 主人,快来看啊,你的包打好了"
   },
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "dependencies": {
+    "electron-is-dev": "^0.3.0"
+  }
 }
