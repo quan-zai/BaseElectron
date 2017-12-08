@@ -1,6 +1,8 @@
 const electron  = require('electron')
 const { globalShortcut, app, BrowserWindow, autoUpdater, dialog } = require('electron')
 const isDev = require('electron-is-dev')
+const { appUpdater } = require('./autoupdater');
+
 // Module to control application life.
 
 // Module to create native browser window.
@@ -8,9 +10,18 @@ const isDev = require('electron-is-dev')
 const path = require('path')
 const url = require('url')
 
+if (require('electron-squirrel-startup')) {
+    app.quit();
+}
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+
+// Funtion to check the current OS. As of now there is no proper method to add auto-updates to linux platform.
+function isWindowsOrmacOS() {
+    return process.platform === 'darwin' || process.platform === 'win32';
+}
 
 function createWindow () {
     // Create the browser window.
@@ -25,17 +36,26 @@ function createWindow () {
     // }))
 
     // add accelerator
-    globalShortcut.register('Cmd+Y', () => {
-        let child = new BrowserWindow({ parent: mainWindow, modal: true, show: true })
-        child.loadURL("https://baidu.com")
-        child.setFullScreen(true)
-        child.once('ready-to-show', () => {
-            child.show()
-        })
-    })
+    // globalShortcut.register('Cmd+Y', () => {
+    //     let child = new BrowserWindow({ parent: mainWindow, modal: true, show: true })
+    //     child.loadURL("https://baidu.com")
+    //     child.setFullScreen(true)
+    //     child.once('ready-to-show', () => {
+    //         child.show()
+    //     })
+    // })
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
+
+    const page = mainWindow.webContents;
+
+    page.once('did-frame-finish-load', () => {
+        const checkOS = isWindowsOrmacOS();
+        if (checkOS && !isDev) {
+            // Initate auto-updates on macOs and windows
+            appUpdater();
+        }});
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -52,33 +72,7 @@ function createWindow () {
 app.on('ready', createWindow)
 
 if(!isDev) {
-    const server = 'https://github.com/xuzhengquan/BaseElectron'
-    const feed = `${server}/update/${process.platform}/${app.getVersion()}`
 
-    autoUpdater.setFeedURL(feed)
-
-    setInterval(() => {
-        autoUpdater.checkForUpdates()
-    }, 60000)
-
-    autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-        const dialogOpts = {
-            type: 'info',
-            buttons: ['Restart', 'Later'],
-            title: 'Application Update',
-            message: process.platform === 'win32' ? releaseNotes : releaseName,
-            detail: 'A new version has been downloaded. Restart the application to apply the updates.'
-        }
-
-        dialog.showMessageBox(dialogOpts, (response) => {
-            if (response === 0) autoUpdater.quitAndInstall()
-        })
-    })
-
-    autoUpdater.on('error', message => {
-        console.error('There was a problem updating the application')
-        console.error(message)
-    })
 }
 
 // Quit when all windows are closed.
