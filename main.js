@@ -20,6 +20,7 @@ let mainWindow
 
 // Funtion to check the current OS. As of now there is no proper method to add auto-updates to linux platform.
 function isWindowsOrmacOS() {
+    console.log('process.platform =====', process.platform)
     return process.platform === 'darwin' || process.platform === 'win32';
 }
 
@@ -45,15 +46,20 @@ function createWindow () {
     //     })
     // })
 
-    // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
+    // if(!isDev) {
+        // Open the DevTools.
+        mainWindow.webContents.openDevTools()
+    // }
 
     const page = mainWindow.webContents;
 
     page.once('did-frame-finish-load', () => {
         const checkOS = isWindowsOrmacOS();
+        console.log('1111111111')
+
         if (checkOS && !isDev) {
             // Initate auto-updates on macOs and windows
+            console.log('app_updater')
             appUpdater();
         }});
 
@@ -70,10 +76,6 @@ function createWindow () {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
-
-if(!isDev) {
-
-}
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
