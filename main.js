@@ -72,10 +72,6 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
 
-function isWindowsOrmacOS() {
-    return process.platform === 'darwin' || process.platform === 'win32';
-}
-
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
   // On OS X it is common for applications and their menu bar
@@ -91,13 +87,6 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow()
   }
-})
-
-page.once('did-frame-finish-load', () => {
-    const checkOS = isWindowsOrmacOS()
-    if(checkOS && !isDev) {
-        appUpdater();
-    }
 })
 
 // In this file you can include the rest of your app's specific main process
