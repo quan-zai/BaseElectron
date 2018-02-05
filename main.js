@@ -1,9 +1,7 @@
 const electron  = require('electron')
-const { globalShortcut, app, BrowserWindow, autoUpdater, dialog } = require('electron')
+const { globalShortcut, app, BrowserWindow } = require('electron')
 const isDev = require('electron-is-dev')
-// Module to control application life.
-
-// Module to create native browser window.
+const { appUpdater } = require('./autoupdater')
 
 const path = require('path')
 const url = require('url')
@@ -51,34 +49,8 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
 
-if(!isDev) {
-    const server = 'https://github.com/xuzhengquan/BaseElectron'
-    const feed = `${server}/update/${process.platform}/${app.getVersion()}`
-
-    autoUpdater.setFeedURL(feed)
-
-    setInterval(() => {
-        autoUpdater.checkForUpdates()
-    }, 60000)
-
-    autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-        const dialogOpts = {
-            type: 'info',
-            buttons: ['Restart', 'Later'],
-            title: 'Application Update',
-            message: process.platform === 'win32' ? releaseNotes : releaseName,
-            detail: 'A new version has been downloaded. Restart the application to apply the updates.'
-        }
-
-        dialog.showMessageBox(dialogOpts, (response) => {
-            if (response === 0) autoUpdater.quitAndInstall()
-        })
-    })
-
-    autoUpdater.on('error', message => {
-        console.error('There was a problem updating the application')
-        console.error(message)
-    })
+function isWindowsOrmacOS() {
+    return process.platform === 'darwin' || process.platform === 'win32';
 }
 
 // Quit when all windows are closed.
@@ -96,6 +68,13 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+page.once('did-frame-finish-load', () => {
+    const checkOS = isWindowsOrmacOS()
+    if(checkOS && !isDev) {
+        appUpdater();
+    }
 })
 
 // In this file you can include the rest of your app's specific main process
