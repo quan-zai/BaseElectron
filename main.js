@@ -2,13 +2,22 @@ const electron  = require('electron')
 const { globalShortcut, app, BrowserWindow } = require('electron')
 const isDev = require('electron-is-dev')
 const { appUpdater } = require('./autoupdater')
-
 const path = require('path')
 const url = require('url')
+
+if (require('electron-squirrel-startup')) {
+    app.quit();
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+
+// Funtion to check the current OS. As of now there is no proper method to add auto-updates to linux platform.
+function isWindowsOrmacOS() {
+    console.log('process.platform =====', process.platform)
+    return process.platform === 'darwin' || process.platform === 'win32';
+}
 
 function createWindow () {
     // Create the browser window.
@@ -23,17 +32,31 @@ function createWindow () {
     // }))
 
     // add accelerator
-    globalShortcut.register('Cmd+Y', () => {
-        let child = new BrowserWindow({ parent: mainWindow, modal: true, show: true })
-        child.loadURL("https://baidu.com")
-        child.setFullScreen(true)
-        child.once('ready-to-show', () => {
-            child.show()
-        })
-    })
+    // globalShortcut.register('Cmd+Y', () => {
+    //     let child = new BrowserWindow({ parent: mainWindow, modal: true, show: true })
+    //     child.loadURL("https://baidu.com")
+    //     child.setFullScreen(true)
+    //     child.once('ready-to-show', () => {
+    //         child.show()
+    //     })
+    // })
 
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    // if(!isDev) {
+        // Open the DevTools.
+        mainWindow.webContents.openDevTools()
+    // }
+
+    const page = mainWindow.webContents;
+
+    page.once('did-frame-finish-load', () => {
+        const checkOS = isWindowsOrmacOS();
+        console.log('1111111111')
+
+        if (checkOS && !isDev) {
+            // Initate auto-updates on macOs and windows
+            console.log('app_updater')
+            appUpdater();
+        }});
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
