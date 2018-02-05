@@ -2,10 +2,6 @@
   "productName": "BaseElectron",
   "author": "xuzhengquan",
   "description": "A minimal Electron application",
-  "devDependencies": {
-    "electron": "~1.7.8",
-    "electron-packager": "^10.1.0"
-  },
   "keywords": [
     "Electron",
     "quick",
@@ -21,9 +17,14 @@
     "sign": "electron-osx-sign ./dist/BaseElectron-darwin-x64/BaseElectron.app",
     "build": "electron-packager ./ BaseElectron --platform=darwin --arch=x64 --overwrite --out ./dist --production && npm run sign && say -v Sin-ji 主人,快来看啊,你的包打好了"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "devDependencies": {
+    "electron": "~1.7.8",
+    "electron-packager": "^10.1.0"
+  },
   "dependencies": {
     "electron-is-dev": "^0.3.0",
+    "electron-osx-sign": "^0.4.8",
     "electron-squirrel-startup": "^1.0.0"
   }
 }
