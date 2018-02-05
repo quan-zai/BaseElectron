@@ -1,5 +1,5 @@
 const electron  = require('electron')
-const { globalShortcut, app, BrowserWindow } = require('electron')
+const { globalShortcut, app, BrowserWindow, ipcMain } = require('electron')
 const isDev = require('electron-is-dev')
 const { appUpdater } = require('./autoupdater')
 const path = require('path')
@@ -21,15 +21,15 @@ function isWindowsOrmacOS() {
 
 function createWindow () {
     // Create the browser window.
-    mainWindow = new BrowserWindow({width: 800, height: 600, backgroundColor: '#2e2c29'})
+    mainWindow = new BrowserWindow({width: 800, height: 600 })
     mainWindow.setMenuBarVisibility(true)
     // and load the index.html of the app.
-      mainWindow.loadURL("https://electron.org.cn/")
-    // mainWindow.loadURL(url.format({
-    //   pathname: path.join(__dirname, 'index.html'),
-    //   protocol: 'file:',
-    //   slashes: true
-    // }))
+    //   mainWindow.loadURL("https://electron.org.cn/")
+    mainWindow.loadURL(url.format({
+      pathname: path.join(__dirname, 'index.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
 
     // add accelerator
     // globalShortcut.register('Cmd+Y', () => {
@@ -87,6 +87,10 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+ipcMain.on('console', (event, arg) => {
+    console.log('arg ==== ', arg)
 })
 
 // In this file you can include the rest of your app's specific main process

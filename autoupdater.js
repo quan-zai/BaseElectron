@@ -1,5 +1,5 @@
 const os = require('os');
-const {app, autoUpdater, dialog} = require('electron');
+const {app, autoUpdater, dialog, ipcRenderer} = require('electron');
 const version = app.getVersion();
 const platform = os.platform() + '_' + os.arch();  // usually returns darwin_64
 
@@ -7,11 +7,17 @@ const updaterFeedURL = 'http://base-electron.herokuapp.com/update/' + platform +
 // replace updaterFeedURL with http://yourappname.herokuapp.com
 
 function appUpdater() {
+    ipcMain.on('sync', (event, arg) => event.sender.send('log', 1111))
+
+
     autoUpdater.setFeedURL(updaterFeedURL);
     /* Log whats happening
      TODO send autoUpdater events to renderer so that we could console log it in developer tools
      You could alsoe use nslog or other logging to see what's happening */
-    autoUpdater.on('error', err => console.log(err));
+    autoUpdater.on('error', err => {
+        console.log(err)
+        ipcRenderer.send('console', err);
+    });
     autoUpdater.on('checking-for-update', () => console.log('checking-for-update'));
     autoUpdater.on('update-available', () => console.log('update-available'));
     autoUpdater.on('update-not-available', () => console.log('update-not-available'));
