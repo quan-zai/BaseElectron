@@ -7,9 +7,6 @@ const updaterFeedURL = 'http://base-electron.herokuapp.com/update/' + platform +
 // replace updaterFeedURL with http://yourappname.herokuapp.com
 
 function appUpdater() {
-    ipcMain.on('sync', (event, arg) => event.sender.send('log', 1111))
-
-
     autoUpdater.setFeedURL(updaterFeedURL);
     /* Log whats happening
      TODO send autoUpdater events to renderer so that we could console log it in developer tools
