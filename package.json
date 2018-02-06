@@ -17,7 +17,7 @@
     "sign": "electron-osx-sign ./dist/BaseElectron-darwin-x64/BaseElectron.app",
     "build": "electron-packager ./ BaseElectron --platform=darwin --arch=x64 --overwrite --out ./dist --production && npm run sign && say -v Sin-ji 主人,快来看啊,你的包打好了"
   },
-  "version": "1.0.1",
+  "version": "1.0.0",
   "devDependencies": {
     "electron": "~1.7.8",
     "electron-packager": "^10.1.0"
