@@ -55,7 +55,7 @@ function createWindow () {
         if (checkOS && !isDev) {
             // Initate auto-updates on macOs and windows
             console.log('app_updater')
-            appUpdater();
+            appUpdater(mainWindow);
         }});
 
     // Emitted when the window is closed.
